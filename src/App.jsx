@@ -21,7 +21,7 @@ export default function App() {
   const [playbackSpeed, setPlaybackSpeed] = useState(1)
   const [autoPause, setAutoPause] = useState(false)
   const [flashEffect, setFlashEffect] = useState(false)
-  
+
   const [hotkeys, setHotkeys] = useState(() => {
     const saved = localStorage.getItem('videoAnalyzerHotkeys')
     return saved ? JSON.parse(saved) : { p: 'Perfektní příjem', o: 'Obrana v poli', c: 'Chyba / Bod soupeře' }
@@ -40,7 +40,7 @@ export default function App() {
   const addMarker = (label) => {
     if (!playerRef.current) return
     const currentSeconds = playerRef.current.getCurrentTime()
-    
+
     if (autoPause) {
       playerRef.current.pauseVideo()
     }
@@ -121,14 +121,14 @@ export default function App() {
 
     markdownContent += `\n## Detailní záznam (Deník)\n\n`
     markers.forEach(marker => {
-      markdownContent += `- **[${marker.time}]** ${marker.label}\n`
+      markdownContent += `- **[${marker.time}](zapas.mp4#t=${Math.floor(marker.rawTime)})** ${marker.label}\n`
     })
 
     const blob = new Blob([markdownContent], { type: 'text/markdown;charset=utf-8' })
     const url = URL.createObjectURL(blob)
     const link = document.createElement('a')
     link.href = url
-    link.download = `Analyza_videa_${new Date().toISOString().slice(0,10)}.md`
+    link.download = `Analyza_videa_${new Date().toISOString().slice(0, 10)}.md`
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)
@@ -170,11 +170,11 @@ export default function App() {
         <h1 className="text-xl font-bold tracking-tight text-indigo-400">
           Video Cut-List <span className="text-xs font-normal text-slate-500">v2.1 PRO</span>
         </h1>
-        
+
         <form onSubmit={handleLoadVideo} className="flex gap-2 w-full sm:w-auto max-w-md">
-          <input 
-            type="text" 
-            placeholder="Vlož URL videa z YouTube..." 
+          <input
+            type="text"
+            placeholder="Vlož URL videa z YouTube..."
             value={inputUrl}
             onChange={(e) => setInputUrl(e.target.value)}
             className="bg-gray-950 border border-gray-800 rounded-lg px-3 py-1.5 text-sm text-slate-200 focus:outline-none focus:border-indigo-500 flex-1 min-w-[260px]"
@@ -187,7 +187,7 @@ export default function App() {
 
       <main className="p-6 grid grid-cols-1 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
         <div className="lg:col-span-2 space-y-4">
-          
+
           <div className={`aspect-video bg-gray-900 border ${flashEffect ? 'border-indigo-500 shadow-[0_0_30px_rgba(99,102,241,0.5)]' : 'border-gray-800'} rounded-xl overflow-hidden shadow-2xl relative flex items-center justify-center transition-all duration-100`}>
             {videoId ? (
               <YouTube
@@ -226,17 +226,17 @@ export default function App() {
                 className="flex items-center gap-1.5 bg-gray-800 hover:bg-gray-700 text-slate-300 px-3 py-1.5 rounded-lg text-sm font-medium transition border border-gray-700 cursor-pointer"
                 title="Vrátit video o 3 vteřiny zpět"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 17l-5-5 5-5"/><path d="M18 17l-5-5 5-5"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 17l-5-5 5-5" /><path d="M18 17l-5-5 5-5" /></svg>
                 -3s videa
               </button>
 
               <label className="flex items-center gap-2 cursor-pointer group">
                 <div className="relative">
-                  <input 
-                    type="checkbox" 
-                    className="sr-only" 
-                    checked={autoPause} 
-                    onChange={(e) => setAutoPause(e.target.checked)} 
+                  <input
+                    type="checkbox"
+                    className="sr-only"
+                    checked={autoPause}
+                    onChange={(e) => setAutoPause(e.target.checked)}
                   />
                   <div className={`block w-10 h-6 rounded-full transition-colors ${autoPause ? 'bg-indigo-500' : 'bg-gray-800'}`}></div>
                   <div className={`absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform ${autoPause ? 'translate-x-4' : ''}`}></div>
@@ -267,7 +267,7 @@ export default function App() {
         <div className="bg-gray-900 border border-gray-800 rounded-xl flex flex-col h-[calc(100vh-140px)] shadow-xl">
           <div className="p-4 border-b border-gray-800 flex justify-between items-center">
             <h2 className="font-semibold text-slate-200">Zaznamenané momenty ({markers.length})</h2>
-            <button 
+            <button
               onClick={exportToObsidian}
               className="text-xs bg-indigo-600 hover:bg-indigo-500 text-white font-medium px-3 py-1.5 rounded-md transition cursor-pointer shadow-[0_0_15px_rgba(79,70,229,0.3)] hover:shadow-[0_0_20px_rgba(79,70,229,0.5)]"
             >
@@ -278,8 +278,8 @@ export default function App() {
           <div className="p-4 overflow-y-auto flex-1">
             <div className="space-y-2">
               {markers.map((marker) => (
-                <div 
-                  key={marker.id} 
+                <div
+                  key={marker.id}
                   onClick={() => seekToTime(marker.rawTime)}
                   className="flex items-center gap-3 bg-gray-950 p-3 border border-gray-800/60 rounded-lg hover:border-indigo-500/30 hover:bg-gray-800 transition cursor-pointer group"
                 >
@@ -287,7 +287,7 @@ export default function App() {
                     {marker.time}
                   </span>
                   <span className="text-sm text-slate-300 flex-1">{marker.label}</span>
-                  
+
                   {/* NOVÉ: Skupina tlačítek akcí (Korekce času a Smazání) */}
                   <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition">
                     <button
@@ -302,18 +302,19 @@ export default function App() {
                       className="p-1.5 text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 rounded transition cursor-pointer"
                       title="Smazat značku"
                     >
-                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>
                     </button>
                   </div>
                 </div>
               ))}
               {markers.length === 0 && (
                 <div className="text-center text-slate-600 py-12 text-sm flex flex-col items-center gap-2">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="opacity-50"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="opacity-50"><polygon points="5 3 19 12 5 21 5 3" /></svg>
                   Stiskni P, O, C pro uložení momentu.
                 </div>
               )}
             </div>
+
           </div>
         </div>
       </main>

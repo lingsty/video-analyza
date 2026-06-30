@@ -61,7 +61,6 @@ export default function App() {
     })
   }
 
-  // NOVÁ FUNKCE: Přetočení samotného videa o 3 sekundy zpět
   const rewindVideo = () => {
     if (playerRef.current) {
       const currentTime = playerRef.current.getCurrentTime()
@@ -69,9 +68,8 @@ export default function App() {
     }
   }
 
-  // NOVÁ FUNKCE: Zpětná korekce času u už existující značky (odstraní 3 sekundy)
   const adjustMarkerTime = (idToAdjust, seconds, e) => {
-    e.stopPropagation() // Zabrání přetočení videa při kliknutí
+    e.stopPropagation() 
     setMarkers(prevMarkers => {
       const updated = prevMarkers.map(marker => {
         if (marker.id === idToAdjust) {
@@ -113,15 +111,17 @@ export default function App() {
       return
     }
 
+    const currentVideoId = getYouTubeId(videoUrl);
+
     let markdownContent = `# Analýza videa\n\n**Zdroj:** ${videoUrl}\n\n`
     markdownContent += `## Rychlý přehled (Tabulka)\n\n| Čas | Akce |\n|---|---|\n`
     markers.forEach(marker => {
-      markdownContent += `| **${marker.time}** | ${marker.label} |\n`
+      markdownContent += `| **[${marker.time}](https://youtu.be/${currentVideoId}?t=${Math.floor(marker.rawTime)})** | ${marker.label} |\n`
     })
 
     markdownContent += `\n## Detailní záznam (Deník)\n\n`
     markers.forEach(marker => {
-      markdownContent += `- **[${marker.time}](zapas.mp4#t=${Math.floor(marker.rawTime)})** ${marker.label}\n`
+      markdownContent += `- **[${marker.time}](https://youtu.be/${currentVideoId}?t=${Math.floor(marker.rawTime)})** ${marker.label}\n`
     })
 
     const blob = new Blob([markdownContent], { type: 'text/markdown;charset=utf-8' })
@@ -220,7 +220,6 @@ export default function App() {
             </div>
 
             <div className="flex items-center gap-4">
-              {/* NOVÉ: Tlačítko pro přetočení videa o 3 vteřiny zpět */}
               <button
                 onClick={rewindVideo}
                 className="flex items-center gap-1.5 bg-gray-800 hover:bg-gray-700 text-slate-300 px-3 py-1.5 rounded-lg text-sm font-medium transition border border-gray-700 cursor-pointer"
@@ -288,7 +287,6 @@ export default function App() {
                   </span>
                   <span className="text-sm text-slate-300 flex-1">{marker.label}</span>
 
-                  {/* NOVÉ: Skupina tlačítek akcí (Korekce času a Smazání) */}
                   <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition">
                     <button
                       onClick={(e) => adjustMarkerTime(marker.id, -3, e)}
@@ -314,7 +312,6 @@ export default function App() {
                 </div>
               )}
             </div>
-
           </div>
         </div>
       </main>

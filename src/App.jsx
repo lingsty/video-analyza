@@ -105,7 +105,7 @@ export default function App() {
     }
   }
 
-  const exportToObsidian = () => {
+const exportToObsidian = () => {
     if (markers.length === 0) {
       alert("Zatím nemáš žádné značky k exportu!")
       return
@@ -114,9 +114,12 @@ export default function App() {
     const currentVideoId = getYouTubeId(videoUrl);
 
     let markdownContent = `# Analýza videa\n\n**Zdroj:** ${videoUrl}\n\n`
-    markdownContent += `## Rychlý přehled (Tabulka)\n\n| Čas | Akce |\n|---|---|\n`
+    
+    // PŘEDĚLANÁ TABULKA: Přidán sloupec "Poznámka"
+    markdownContent += `## Rychlý přehled (Tabulka)\n\n| Čas | Akce | Poznámka |\n|---|---|---|\n`
     markers.forEach(marker => {
-      markdownContent += `| **[${marker.time}](https://youtu.be/${currentVideoId}?t=${Math.floor(marker.rawTime)})** | ${marker.label} |\n`
+      // Na konec každého řádku přidáváme prázdnou buňku prázdným prostorem mezi svislítky |  |
+      markdownContent += `| **[${marker.time}](https://youtu.be/${currentVideoId}?t=${Math.floor(marker.rawTime)})** | ${marker.label} |  |\n`
     })
 
     markdownContent += `\n## Detailní záznam (Deník)\n\n`

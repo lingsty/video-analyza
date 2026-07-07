@@ -113,12 +113,11 @@ const exportToObsidian = () => {
 
     const currentVideoId = getYouTubeId(videoUrl);
 
-    let markdownContent = `# Analýza videa\n\n**Zdroj:** ${videoUrl}\n\n`
+    // PŘIDÁNO: Odkaz na centrální soubor hned na prvním řádku
+    let markdownContent = `[[Analyza pro hráčů]]\n\n# Analýza videa\n\n**Zdroj:** ${videoUrl}\n\n`
     
-    // PŘEDĚLANÁ TABULKA: Přidán sloupec "Poznámka"
     markdownContent += `## Rychlý přehled (Tabulka)\n\n| Čas | Akce | Poznámka |\n|---|---|---|\n`
     markers.forEach(marker => {
-      // Na konec každého řádku přidáváme prázdnou buňku prázdným prostorem mezi svislítky |  |
       markdownContent += `| **[${marker.time}](https://youtu.be/${currentVideoId}?t=${Math.floor(marker.rawTime)})** | ${marker.label} |  |\n`
     })
 

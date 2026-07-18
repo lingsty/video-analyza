@@ -22,9 +22,15 @@ export default function App() {
   const [autoPause, setAutoPause] = useState(false)
   const [flashEffect, setFlashEffect] = useState(false)
 
+  // UPRAVENO: Přidána výchozí zkratka 'n' pro "Nahrá libera"
   const [hotkeys, setHotkeys] = useState(() => {
     const saved = localStorage.getItem('videoAnalyzerHotkeys')
-    return saved ? JSON.parse(saved) : { p: 'Perfektní příjem', o: 'Obrana v poli', c: 'Chyba / Bod soupeře' }
+    return saved ? JSON.parse(saved) : { 
+      p: 'Perfektní příjem', 
+      o: 'Obrana v poli', 
+      c: 'Chyba / Bod soupeře',
+      n: 'Nahrá libera' 
+    }
   })
 
   const playerRef = useRef(null)
@@ -68,6 +74,15 @@ export default function App() {
     }
   }
 
+  // NOVÁ FUNKCE: Přetočení videa o 3 sekundy dopředu
+  const forwardVideo = () => {
+    if (playerRef.current) {
+      const currentTime = playerRef.current.getCurrentTime()
+      const duration = playerRef.current.getDuration()
+      playerRef.current.seekTo(Math.min(duration, currentTime + 3), true)
+    }
+  }
+
   const adjustMarkerTime = (idToAdjust, seconds, e) => {
     e.stopPropagation() 
     setMarkers(prevMarkers => {
@@ -105,7 +120,7 @@ export default function App() {
     }
   }
 
-const exportToObsidian = () => {
+  const exportToObsidian = () => {
     if (markers.length === 0) {
       alert("Zatím nemáš žádné značky k exportu!")
       return
@@ -113,7 +128,6 @@ const exportToObsidian = () => {
 
     const currentVideoId = getYouTubeId(videoUrl);
 
-    // PŘIDÁNO: Odkaz na centrální soubor hned na prvním řádku
     let markdownContent = `[[Analyza pro hráčů]]\n\n# Analýza videa\n\n**Zdroj:** ${videoUrl}\n\n`
     
     markdownContent += `## Rychlý přehled (Tabulka)\n\n| Čas | Akce | Poznámka |\n|---|---|---|\n`
@@ -221,17 +235,27 @@ const exportToObsidian = () => {
               ))}
             </div>
 
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3">
               <button
                 onClick={rewindVideo}
                 className="flex items-center gap-1.5 bg-gray-800 hover:bg-gray-700 text-slate-300 px-3 py-1.5 rounded-lg text-sm font-medium transition border border-gray-700 cursor-pointer"
                 title="Vrátit video o 3 vteřiny zpět"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 17l-5-5 5-5" /><path d="M18 17l-5-5 5-5" /></svg>
-                -3s videa
+                -3s
               </button>
 
-              <label className="flex items-center gap-2 cursor-pointer group">
+              {/* UPRAVENO: Nové tlačítko +3s videa */}
+              <button
+                onClick={forwardVideo}
+                className="flex items-center gap-1.5 bg-gray-800 hover:bg-gray-700 text-slate-300 px-3 py-1.5 rounded-lg text-sm font-medium transition border border-gray-700 cursor-pointer"
+                title="Posunout video o 3 vteřiny dopředu"
+              >
+                +3s
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M13 17l5-5-5-5" /><path d="M6 17l5-5-5-5" /></svg>
+              </button>
+
+              <label className="flex items-center gap-2 cursor-pointer group ml-2">
                 <div className="relative">
                   <input
                     type="checkbox"
@@ -249,13 +273,14 @@ const exportToObsidian = () => {
 
           <div className="bg-gray-900 p-4 border border-gray-800 rounded-xl">
             <h3 className="text-sm font-semibold text-slate-400 mb-3">Dynamické zkratky (Klikni na text pro úpravu)</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              {['p', 'o', 'c'].map(key => (
+            {/* UPRAVENO: Grid se přizpůsobuje pro 4 elementy (sm:grid-cols-4) */}
+            <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
+              {['p', 'o', 'c', 'n'].map(key => (
                 <div key={key} className="flex items-center gap-3 bg-gray-950 p-2 border border-gray-800/80 rounded-lg focus-within:border-indigo-500/50 transition">
                   <kbd className="bg-slate-800 text-slate-300 border border-slate-700 px-2.5 py-1 rounded font-bold font-mono uppercase">{key}</kbd>
                   <input
                     type="text"
-                    value={hotkeys[key]}
+                    value={hotkeys[key] || ''}
                     onChange={(e) => handleHotkeyChange(key, e.target.value)}
                     className="bg-transparent text-sm text-slate-300 focus:outline-none w-full"
                   />
@@ -310,7 +335,7 @@ const exportToObsidian = () => {
               {markers.length === 0 && (
                 <div className="text-center text-slate-600 py-12 text-sm flex flex-col items-center gap-2">
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="opacity-50"><polygon points="5 3 19 12 5 21 5 3" /></svg>
-                  Stiskni P, O, C pro uložení momentu.
+                  Stiskni P, O, C, N pro uložení momentu.
                 </div>
               )}
             </div>
